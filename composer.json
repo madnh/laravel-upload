@@ -16,5 +16,12 @@
     "psr-4": {
       "MaDnh\\LaravelUpload\\": "src/"
     }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "MaDnh\\LaravelUpload\\LaravelUploadServiceProvider"
+      ]
+    }
   }
 }

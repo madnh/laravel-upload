@@ -61,11 +61,20 @@ abstract class TemporaryUploadHandler extends UploadHandler
         }
     }
 
+    /**
+     * @return string
+     */
     protected function getTempFileNamePrefix()
     {
         return 'temp_' . time() . '_' . str_random(7);
     }
 
+    /**
+     * @param string     $filename
+     * @param string $store_path
+     *
+     * @return string
+     */
     public function getTemporaryFilePath($filename, $store_path = null)
     {
         $store_path = $store_path ? $store_path : static::getTempStorePath();
@@ -78,6 +87,11 @@ abstract class TemporaryUploadHandler extends UploadHandler
         return config('upload.upload_temp_path', storage_path('app/upload_temp'));
     }
 
+    /**
+     * @param $filename
+     *
+     * @return bool
+     */
     public function temporaryFileExists($filename)
     {
         $temp_store_path = $this->getTemporaryFilePath($filename);
@@ -139,6 +153,12 @@ abstract class TemporaryUploadHandler extends UploadHandler
         $this->processUploadedFile($tempFilePath, $save_name);
     }
 
+    /**
+     * @param        $dangerousFilename
+     * @param string $platform
+     *
+     * @return string
+     */
     protected function sanitizeFileName($dangerousFilename, $platform = 'Unix')
     {
         if (in_array(strtolower($platform), array('unix', 'linux'))) {
@@ -154,5 +174,11 @@ abstract class TemporaryUploadHandler extends UploadHandler
         return str_replace($dangerousCharacters, '_', $dangerousFilename);
     }
 
+    /**
+     * @param string $tempFilePath
+     * @param string $save_name
+     *
+     * @return void
+     */
     abstract public function processUploadedFile($tempFilePath, $save_name);
 }

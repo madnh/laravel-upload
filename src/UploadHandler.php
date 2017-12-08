@@ -8,9 +8,9 @@ use Illuminate\Http\UploadedFile;
 abstract class UploadHandler
 {
     /**
-     * @var string|array string is config profile name
+     * @var array
      */
-    public $profile;
+    protected $profile;
 
     /**
      * Store path, override store path in profile
@@ -34,33 +34,44 @@ abstract class UploadHandler
     protected $lastValidate;
 
     /**
-     * @param string $profile
-     * @throws \Exception
+     * @param array $profile
      */
-    public function setProfile($profile)
+    public function setProfile(array $profile)
     {
-        if (is_string($profile)) {
-            $profile = config('upload.profiles.' . $profile);
-
-            if (empty($profile)) {
-                throw new \Exception('Upload file profile not found');
-            }
-        }
-
-        $profile = array_merge([
-            'file_types' => true,
-            'size' => true
-        ], (array)$profile);
+        $profile = array_merge($this->getDefaultProfileConfig(), (array)$profile);
 
         $this->profile = $profile;
+        }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultProfileConfig()
+    {
+        return [
+            'store_path' => storage_path('/app'),
+            'file_types' => true,
+            'size' => true
+        ];
+
     }
 
-
+    /**
+     * @throws \Exception
+     */
     protected function makeSourceProfileLoaded()
     {
         if (!is_array($this->profile)) {
-            $this->setProfile(!empty($this->profile) ? $this->profile : config('upload.default_profile'));
+            $this->setProfile($this->getProfile());
         }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getProfile()
+    {
+        return [];
     }
 
 
@@ -107,7 +118,9 @@ abstract class UploadHandler
 
     /**
      * @param UploadedFile|File|string $file
+     *
      * @return UploadedFile
+     * @throws \Exception
      */
     public function handle($file)
     {
