@@ -4,10 +4,10 @@
 namespace MaDnh\LaravelUpload;
 
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as BaseProvider;
 use MaDnh\LaravelUpload\Command\UploadCommand;
 
-class LaravelUploadServiceProvider extends ServiceProvider
+class ServiceProvider extends BaseProvider
 {
     public function register()
     {

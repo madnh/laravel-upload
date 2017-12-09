@@ -13,12 +13,6 @@ abstract class UploadHandler
     protected $profile;
 
     /**
-     * Store path, override store path in profile
-     * @var string
-     */
-    public $store_path;
-
-    /**
      * @var FileValidateAbstract[]
      */
     public $validates = [
@@ -34,6 +28,11 @@ abstract class UploadHandler
     protected $lastValidate;
 
     /**
+     * @var UploadedFile
+     */
+    protected $file;
+
+    /**
      * @param array $profile
      */
     public function setProfile(array $profile)
@@ -41,7 +40,7 @@ abstract class UploadHandler
         $profile = array_merge($this->getDefaultProfileConfig(), (array)$profile);
 
         $this->profile = $profile;
-        }
+    }
 
     /**
      * @return array
@@ -56,12 +55,9 @@ abstract class UploadHandler
 
     }
 
-    /**
-     * @throws \Exception
-     */
     protected function makeSourceProfileLoaded()
     {
-        if (!is_array($this->profile)) {
+        if ( ! is_array($this->profile)) {
             $this->setProfile($this->getProfile());
         }
     }
@@ -69,20 +65,22 @@ abstract class UploadHandler
     /**
      * @return array
      */
-    protected function getProfile()
-    {
-        return [];
-    }
-
+    protected abstract function getProfile();
 
     /**
-     * @param $file
+     * @param UploadedFile $file
+     *
      * @return true
      * @throws \Exception
      */
-    public function validate($file)
+    public function validate($file = null)
     {
         $this->makeSourceProfileLoaded();
+
+        if(!$file){
+            $file = $this->file;
+        }
+
         $validator = new ValidateGroup($this->profile);
         $validator->validates = $this->validates;
         $validate_result = $validator->validate($file);
@@ -100,11 +98,17 @@ abstract class UploadHandler
 
     /**
      * Validate file silent
-     * @param $file
+     *
+     * @param UploadedFile $file
+     *
      * @return bool
      */
-    public function isValidate($file)
+    public function isValidate($file = null)
     {
+        if(!$file){
+            $file = $this->file;
+        }
+
         try {
             if ($this->validate($file)) {
                 return true;
@@ -117,24 +121,46 @@ abstract class UploadHandler
     }
 
     /**
+     * @return UploadedFile
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param UploadedFile $file
+     *
+     * @return UploadHandler
+     */
+    public function setFile(UploadedFile $file)
+    {
+        $this->file = $file;
+
+        return $this;
+    }
+
+
+    /**
      * @param UploadedFile|File|string $file
      *
      * @return UploadedFile
      * @throws \Exception
      */
-    public function handle($file)
+    public function handle($file = null)
     {
         $this->makeSourceProfileLoaded();
-        $this->validate($file);
-        $this->process($file);
+
+        if($file){
+            $this->setFile($file);
+        }
+
+        $this->validate();
+        $this->process();
 
         return $file;
     }
 
-    abstract public function process($file);
 
-    protected function getStorePath()
-    {
-        return $this->store_path ? $this->store_path : $this->profile['store_path'];
-    }
+    abstract public function process();
 }

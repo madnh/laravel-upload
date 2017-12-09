@@ -10,7 +10,7 @@ In case of your Laravel's version is early than 5.5 or it's turned of, you can a
 ```php
 'providers' => [
     ...
-    \MaDnh\LaravelUpload\LaravelUploadServiceProvider::class,
+    \MaDnh\LaravelUpload\ServiceProvider::class,
     ...
 ]
 ```
