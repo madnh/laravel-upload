@@ -131,6 +131,8 @@ abstract class TemporaryUploadHandler extends UploadHandler
      * @param string $temp_filename
      * @param string $save_name Only file name, no extension
      *
+     * @return string Saved filename (with extension)
+     *                
      * @throws HandleEmptyTemporaryUploadedFile
      * @throws TemporaryUploadedFileNotFound
      */
@@ -155,7 +157,7 @@ abstract class TemporaryUploadHandler extends UploadHandler
 
         $save_name = $save_name ?: $this->getRealName($tempFilePath);
 
-        $this->processUploadedFile($tempFilePath, $save_name);
+        return $this->processUploadedFile($tempFilePath, $save_name);
     }
 
     /**
@@ -189,7 +191,7 @@ abstract class TemporaryUploadHandler extends UploadHandler
      * @param string $tempFilePath
      * @param string $save_name
      *
-     * @return void
+     * @return string Saved filename (with extension)
      */
     abstract public function processUploadedFile($tempFilePath, $save_name);
 }
