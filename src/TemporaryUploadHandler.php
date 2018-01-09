@@ -132,7 +132,7 @@ abstract class TemporaryUploadHandler extends UploadHandler
      * @param string $save_name Only file name, no extension
      *
      * @return string Saved filename (with extension)
-     *                
+     *
      * @throws HandleEmptyTemporaryUploadedFile
      * @throws TemporaryUploadedFileNotFound
      */
